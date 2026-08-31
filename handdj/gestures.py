@@ -43,9 +43,21 @@ def identify_gesture(hand):
     if not index and not middle and not ring and not pinky:
         return "FIST"
 
-    # Point
+    # Pointing
     if index and not middle and not ring and not pinky:
-        return "POINT"
+
+        wrist = hand[0]
+        index_tip = hand[8]
+
+        dx = index_tip.x - wrist.x
+
+        # Pointing right on the screen
+        if dx > 0:
+            return "POINT_RIGHT"
+
+        # Pointing left on the screen
+        else:
+            return "POINT_LEFT"
 
     return "UNKNOWN"
 
