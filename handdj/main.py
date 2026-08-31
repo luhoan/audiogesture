@@ -6,7 +6,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 from gestures import identify_gesture, GestureStabilizer
-
+from controls import execute_gesture
 
 # Find the model next to this Python file
 MODEL_PATH = Path(__file__).parent / "hand_landmarker.task"
@@ -63,6 +63,9 @@ while True:
 
             gesture = identify_gesture(hand)
             new_gesture = stabilizer.update(gesture)
+
+            if new_gesture is not None:
+                execute_gesture(new_gesture)
 
             cv2.putText(
                 frame,
