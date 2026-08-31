@@ -5,6 +5,8 @@ from pathlib import Path
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+from gestures import identify_gesture
+
 
 # Find the model next to this Python file
 MODEL_PATH = Path(__file__).parent / "hand_landmarker.task"
@@ -57,6 +59,18 @@ while True:
     if result.hand_landmarks:
 
         for hand in result.hand_landmarks:
+
+            gesture = identify_gesture(hand)
+
+            cv2.putText(
+                frame,
+                gesture,
+                (30, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 255, 0),
+                2,
+            )
 
             height, width, _ = frame.shape
 
