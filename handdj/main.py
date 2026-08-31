@@ -5,7 +5,7 @@ from pathlib import Path
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-from gestures import identify_gesture
+from gestures import identify_gesture, GestureStabilizer
 
 
 # Find the model next to this Python file
@@ -25,6 +25,7 @@ options = vision.HandLandmarkerOptions(
 
 detector = vision.HandLandmarker.create_from_options(options)
 
+stabilizer = GestureStabilizer(required_frames=8)
 
 # Open MacBook camera
 cap = cv2.VideoCapture(0)
@@ -61,13 +62,24 @@ while True:
         for hand in result.hand_landmarks:
 
             gesture = identify_gesture(hand)
+            new_gesture = stabilizer.update(gesture)
 
             cv2.putText(
                 frame,
-                gesture,
+                f"Detected: {gesture}",
                 (30, 50),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                1,
+                0.8,
+                (0, 255, 0),
+                2,
+            )
+
+            cv2.putText(
+                frame,
+                f"Stable: {stabilizer.stable_gesture}",
+                (30, 85),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
                 (0, 255, 0),
                 2,
             )

@@ -2,8 +2,6 @@ import math
 
 
 def distance(a, b):
-    """Distance between two MediaPipe landmarks."""
-
     return math.sqrt(
         (a.x - b.x) ** 2 +
         (a.y - b.y) ** 2 +
@@ -12,14 +10,6 @@ def distance(a, b):
 
 
 def finger_extended(hand, pip, tip):
-    """
-    Determines whether a finger is extended.
-
-    A simple first approximation:
-    the fingertip should be farther from
-    the wrist than the PIP joint.
-    """
-
     wrist = hand[0]
 
     tip_distance = distance(hand[tip], wrist)
@@ -29,31 +19,15 @@ def finger_extended(hand, pip, tip):
 
 
 def get_finger_states(hand):
-    """
-    Returns the state of the four main fingers.
-
-    True  = extended
-    False = folded
-    """
-
-    index = finger_extended(hand, 6, 8)
-    middle = finger_extended(hand, 10, 12)
-    ring = finger_extended(hand, 14, 16)
-    pinky = finger_extended(hand, 18, 20)
-
     return {
-        "index": index,
-        "middle": middle,
-        "ring": ring,
-        "pinky": pinky,
+        "index": finger_extended(hand, 6, 8),
+        "middle": finger_extended(hand, 10, 12),
+        "ring": finger_extended(hand, 14, 16),
+        "pinky": finger_extended(hand, 18, 20),
     }
 
 
 def identify_gesture(hand):
-    """
-    Convert hand landmarks into a gesture name.
-    """
-
     fingers = get_finger_states(hand)
 
     index = fingers["index"]
@@ -61,19 +35,51 @@ def identify_gesture(hand):
     ring = fingers["ring"]
     pinky = fingers["pinky"]
 
-    # ✋ Open palm
+    # Open palm
     if index and middle and ring and pinky:
         return "OPEN_PALM"
 
-    # ✊ Fist
+    # Fist
     if not index and not middle and not ring and not pinky:
         return "FIST"
 
-    # 👉 Pointing
+    # Point
     if index and not middle and not ring and not pinky:
-
-        # We'll distinguish left/right later.
         return "POINT"
 
     return "UNKNOWN"
 
+
+class GestureStabilizer:
+
+    def __init__(self, required_frames=8):
+        self.required_frames = required_frames
+
+        self.current_gesture = None
+        self.frame_count = 0
+
+        self.stable_gesture = "UNKNOWN"
+
+    def update(self, detected_gesture):
+
+        # Same gesture as previous frame
+        if detected_gesture == self.current_gesture:
+            self.frame_count += 1
+
+        # New gesture
+        else:
+            self.current_gesture = detected_gesture
+            self.frame_count = 1
+
+        # Gesture has remained stable
+        if self.frame_count >= self.required_frames:
+
+            if detected_gesture != self.stable_gesture:
+
+                self.stable_gesture = detected_gesture
+
+                # Return the NEW gesture
+                return detected_gesture
+
+        # Nothing changed
+        return None
