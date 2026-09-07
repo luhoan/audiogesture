@@ -26,6 +26,6 @@ pinch = mute
 Right now, as of August 2026, the current model is being fine tuned on a few hundred photos of my own hands
 so that they're able to recognize the last 3 gestures much better.
 
-## INSTRUCTIONS to run:**
+## INSTRUCTIONS to run:
 Run main.py within HandDJ, not in the root. It should open up a camera and track your hand and gestures 
 immediately. 
