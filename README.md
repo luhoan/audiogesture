@@ -1,5 +1,4 @@
-**Motivations**\
-
+__**Motivations**__\
 I was inspired and curious as to how computer vision can work within machine learning contexts. 
 With that being said, this is a freshmen project that I sought to put myself towards, having a
 little bit of ML background around due to my Sin Karkinos project.
@@ -25,6 +24,6 @@ pinch = mute
 Right now, as of August 2026, the current model is being fine tuned on a few hundred photos of my own hands
 so that they're able to recognize the last 3 gestures much better.
 
-**INSTRUCTIONS to run:**\
+__**INSTRUCTIONS to run:**__\
 Run main.py within HandDJ, not in the root. It should open up a camera and track your hand and gestures 
 immediately. 
